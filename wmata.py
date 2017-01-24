@@ -4,6 +4,8 @@ import twilio.twiml
 from twilio.rest import TwilioRestClient
 from flask import Flask, request, redirect
 
+app = Flask(__name__)
+
 #TWILIO ACCOUNT VARIABLES
 account_sid="AC67763bda7bd48a1ed040b75d3f2d5793"
 auth_token="99fcaa71dddeaaf5be755283231b64d4"
@@ -126,14 +128,8 @@ station_dict = {"Metro Center": "A01",
     "Wiehle - Reston East": "N06"
 }
 
-#TWILIO SEND MESSAGE FUNCTION
-#MSG MUST BE IN STRING FORMAT
-def send_msg(msg):
-    client.messages.create( from_='+18623079228',
-                            to='+19735088470',
-                            body=msg)
-
-def at_station(staco):
+#FUNCTION THAT GETS JSON STATION DATA FROM WMATA API
+def raw_stn_data(staco):
     try:
         conn = httplib.HTTPSConnection('api.wmata.com')
         conn.request("GET", "/StationPrediction.svc/json/GetPrediction/%s?%s" %(staco, params), "{body}", headers)
@@ -146,11 +142,13 @@ def at_station(staco):
         #print("[Errno {0}] {1}".format(e.errno, e.strerror))
         return ("[Errno {0}] {1}".format(e.errno, e.strerror))
 
+#CHECKS IF DESIRED STATION IS IN THE STATION LIST
+#FORMATS JSON DATA TO STRING WITH TIME AND LINE OF NEXT TRAINS
 def time_and_station(station):
     if station in station_dict:
         stn_time = []
         #time_list = []
-        loc_dict = json.loads(at_station(station_dict[station]))
+        loc_dict = json.loads(raw_stn_data(station_dict[station]))
 
         for i in loc_dict["Trains"]:
             temp_str = "%s %s" %(i["DestinationName"], i["Min"])
@@ -164,7 +162,26 @@ def time_and_station(station):
     else:
         return "\'%s\' is not a station" %station
 
-print "Type a station name"
-msg = raw_input()
+#TWILIO SEND MESSAGE FUNCTION
+#MSG MUST BE IN STRING FORMAT
+#NUM MUST BE IN STRING FORMAT
+def send_msg(msg, num):
+    client.messages.create( from_='+18623079228',
+                            to='+1%s' %num,
+                            body=msg)
 
-send_msg(time_and_station(msg))
+@app.route("/", methods=['GET', 'POST'])
+def next_train():
+    from_num = request.values.get('From', None)
+    inbound_message = request.form.get("Body")
+
+    msg = time_and_station(inbound_message)
+#    msg = time_and_station("Shaw-Howard U")
+
+    resp = twilio.twiml.Response()
+    resp.message(msg)
+
+    return str(resp)
+
+if __name__ == "__main__":
+    app.run(debug=True)
