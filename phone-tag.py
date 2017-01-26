@@ -1,8 +1,8 @@
 import httplib, urllib, base64
 import json
-import twilio.twiml
+from twilio import twiml
 from twilio.rest import TwilioRestClient
-from flask import Flask, request, redirect
+from flask import Flask, request, Response
 
 app = Flask(__name__)
 
@@ -135,32 +135,28 @@ def raw_stn_data(staco):
         conn.request("GET", "/StationPrediction.svc/json/GetPrediction/%s?%s" %(staco, params), "{body}", headers)
         response = conn.getresponse()
         data = response.read()
-        #print(data)
         conn.close()
         return data
     except Exception as e:
-        #print("[Errno {0}] {1}".format(e.errno, e.strerror))
         return ("[Errno {0}] {1}".format(e.errno, e.strerror))
 
 #CHECKS IF DESIRED STATION IS IN THE STATION LIST
 #FORMATS JSON DATA TO STRING WITH TIME AND LINE OF NEXT TRAINS
-def time_and_station(station):
-    if station in station_dict:
-        stn_time = []
-        #time_list = []
-        loc_dict = json.loads(raw_stn_data(station_dict[station]))
+def next_train(station):
+    for s in station_dict:
+        if station in s:
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict[s]))
 
-        for i in loc_dict["Trains"]:
-            temp_str = "%s %s" %(i["DestinationName"], i["Min"])
-            stn_time.append(temp_str)
-            #time_list.append(i["Min"])
-            #res_str = "%s, %s, %s" % (i["DestinationName"], i["Min"], res_str)
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
 
-        res_str = ', '.join(stn_time)
-        #return stn_time
-        return res_str
-    else:
-        return "\'%s\' is not a station" %station
+            res_str = ', '.join(stn_time)
+            return res_str
+
+
+    return "\'%s\' is not a station" %station
 
 #TWILIO SEND MESSAGE FUNCTION
 #MSG MUST BE IN STRING FORMAT
@@ -170,18 +166,26 @@ def send_msg(msg, num):
                             to='+1%s' %num,
                             body=msg)
 
-@app.route("/", methods=['GET', 'POST'])
-def next_train():
-    from_num = request.values.get('From', None)
+@app.route("/")
+def check_app():
+    # returns a simple string stating the app is working
+    return Response("Phone-tag is live!"), 200
+
+@app.route("/twilio", methods=["POST"])
+def inbound_sms():
+    response = twiml.Response()
+    # we get the SMS message from the request. we could also get the
+    # "To" and the "From" phone number as well
     inbound_message = request.form.get("Body")
+    # we can now use the incoming message text in our Python application
+    response.message(next_train(inbound_message))
+    #if inbound_message == "Hello":
+    #    response.message("Hello back to you!")
+    #else:
+    #    response.message("Hi! Not quite sure what you meant, but okay.")
+    # we return back the mimetype because Twilio needs an XML response
+    return Response(str(response), mimetype="application/xml"), 200
 
-    msg = time_and_station(inbound_message)
-#    msg = time_and_station("Shaw-Howard U")
-
-    resp = twilio.twiml.Response()
-    resp.message(msg)
-
-    return str(resp)
 
 if __name__ == "__main__":
     app.run(debug=True)
