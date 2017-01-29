@@ -1,1 +1,1 @@
-web: python phone-tag.py
+web: python app.py

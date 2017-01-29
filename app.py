@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+import os
 import httplib, urllib, base64
 import json
 from twilio import twiml
