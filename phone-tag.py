@@ -170,7 +170,7 @@ def send_msg(msg, num):
 @app.route("/")
 def check_app():
     # returns a simple string stating the app is working
-    return Response("Phone-tag is live!"), 200
+    return "Phone-tag is live!"
 
 @app.route("/twilio", methods=["POST"])
 def inbound_sms():
