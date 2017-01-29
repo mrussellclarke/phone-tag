@@ -145,7 +145,7 @@ def raw_stn_data(staco):
 #FORMATS JSON DATA TO STRING WITH TIME AND LINE OF NEXT TRAINS
 def next_train(station):
     for s in station_dict:
-        if station in s:
+        if station.lower() in s.lower():
             stn_time = []
             loc_dict = json.loads(raw_stn_data(station_dict[s]))
 
