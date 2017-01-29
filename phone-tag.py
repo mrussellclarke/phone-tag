@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import httplib, urllib, base64
 import json
 from twilio import twiml
@@ -188,4 +189,5 @@ def inbound_sms():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
