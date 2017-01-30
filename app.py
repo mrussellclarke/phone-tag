@@ -20,7 +20,7 @@ headers = {
 params = urllib.urlencode({
 })
 
-station_dict = {"Metro Center": "A01",
+station_dict = {"Metro Center Red": "A01",
     "Farragut North": "A02",
     "Dupont Circle": "A03",
     "Woodley Park-Zoo/Adams Morgan": "A04",
@@ -35,21 +35,18 @@ station_dict = {"Metro Center": "A01",
     "Twinbrook": "A13",
     "Rockville": "A14",
     "Shady Grove": "A15",
-    "Shady Grove Yard": "A99",
-    "Gallery Pl-Chinatown": "B01",
+    "Gallery Place-Chinatown Red": "B01",
     "Judiciary Square": "B02",
     "Union Station": "B03",
     "New York Ave-Florida Ave-Gallaudet U": "B35",
     "Rhode Island Ave-Brentwood": "B04",
     "Brookland-CUA": "B05",
-    "Fort Totten": "B06",
+    "Fort Totten Red": "B06",
     "Takoma": "B07",
     "Silver Spring": "B08",
     "Forest Glen": "B09",
     "Wheaton": "B10",
     "Glenmont": "B11",
-    "Glenmont Yard": "B98",
-    "Brentwood Yard": "B99",
     "Metro Center": "C01",
     "McPherson Sq": "C02",
     "Farragut West": "C03",
@@ -60,17 +57,14 @@ station_dict = {"Metro Center": "A01",
     "Pentagon City": "C08",
     "Crystal City": "C09",
     "Ronald Reagan Washington National Airport": "C10",
-    "Potomac Yard": "C11",
     "Braddock Road": "C12",
     "King Street": "C13",
     "Eisenhower Ave": "C14",
     "Huntington": "C15",
     "C & J Junction": "C97",
-    "Alexandria Yard Leads": "C98",
-    "Alexandria Yard": "C99",
     "Federal Triangle": "D01",
     "Smithsonian": "D02",
-    "L'Enfant Plaza": "D03",
+    "L'Enfant Plaza Blue-Orange-Silver": "D03",
     "Federal Center SW": "D04",
     "Capitol South": "D05",
     "Eastern Market": "D06",
@@ -81,7 +75,6 @@ station_dict = {"Metro Center": "A01",
     "Cheverly": "D11",
     "Landover": "D12",
     "New Carrolton": "D13",
-    "New Carrolton Yard": "D99",
     "Mt Vernon Sq/7th St-Convention Center": "E01",
     "Shaw-Howard U": "E02",
     "U St/African-Amer Civil War Memorial/Cardozo": "E03",
@@ -92,8 +85,7 @@ station_dict = {"Metro Center": "A01",
     "Prince George's Plaza": "E08",
     "College Park-U of MD": "E09",
     "Greenbelt": "E10",
-    "Greenbelt Yard": "E99",
-    "Gallery Pl-Chinatown": "F01",
+    "Gallery Place-Chinatown": "F01",
     "Archives-Navy Mem'l-Penn Quarter": "F02",
     "L'Enfant Plaza": "F03",
     "Waterfront-SEU": "F04",
@@ -104,7 +96,6 @@ station_dict = {"Metro Center": "A01",
     "Naylor Road": "F09",
     "Suitland": "F10",
     "Branch Avenue": "F11",
-    "Branch Avenue Yard": "F99",
     "Benning Road": "G01",
     "Capitol Heights": "G02",
     "Addison Road-Seat Pleasant": "G03",
@@ -121,7 +112,6 @@ station_dict = {"Metro Center": "A01",
     "West Falls Church-VT/UVA": "K06",
     "Dunn Loring-Merrifield": "K07",
     "Vienna/Fairfax-GMU": "K08",
-    "Falls Church Yard": "K99",
     "McLean": "N01",
     "Tysons Corner": "N02",
     "Greensboro": "N03",
@@ -144,6 +134,168 @@ def raw_stn_data(staco):
 #CHECKS IF DESIRED STATION IS IN THE STATION LIST
 #FORMATS JSON DATA TO STRING WITH TIME AND LINE OF NEXT TRAINS
 def next_train(station):
+    if "Fort Totten".lower() in station.lower():
+        if "red" in station.lower():
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Fort Totten Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
+        elif ("green" in station.lower()) or ("yellow" in station.lower()):
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Fort Totten"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+        else:
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Fort Totten"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+
+            loc_dict = json.loads(raw_stn_data(station_dict["Fort Totten Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
+    elif ("gallery" in station.lower()) or ("china" in station.lower()):
+        if "red" in station.lower():
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Gallery Place-Chinatown Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
+        elif ("green" in station.lower()) or ("yellow" in station.lower()):
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Gallery Place-Chinatown"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+        else:
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Gallery Place-Chinatown"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+
+            loc_dict = json.loads(raw_stn_data(station_dict["Gallery Place-Chinatown Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+    elif "l'enfant" in station.lower():
+        if ("green" in station.lower()) or ("yellow" in station.lower()):
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["L'Enfant Plaza"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
+        elif ("blue" in station.lower()) or ("orange" in station.lower()) or ("silver" in station.lower()):
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["L'Enfant Plaza Blue-Orange-Silver"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+        else:
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["L'Enfant Plaza"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+
+            loc_dict = json.loads(raw_stn_data(station_dict["L'Enfant Plaza Blue-Orange-Silver"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+    elif "metro" in station.lower():
+        if "red" in station.lower():
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Metro Center Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
+        elif ("blue" in station.lower()) or ("orange" in station.lower()) or ("silver" in station.lower()):
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Metro Center"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+        else:
+            stn_time = []
+            loc_dict = json.loads(raw_stn_data(station_dict["Metro Center"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+
+            loc_dict = json.loads(raw_stn_data(station_dict["Metro Center Red"]))
+
+            for i in loc_dict["Trains"]:
+                temp_str = "%s %s" %(i["DestinationName"], i["Min"])
+                stn_time.append(temp_str)
+
+            res_str = ', '.join(stn_time)
+            return res_str
+
     for s in station_dict:
         if station.lower() in s.lower():
             stn_time = []
@@ -155,7 +307,6 @@ def next_train(station):
 
             res_str = ', '.join(stn_time)
             return res_str
-
 
     return "\'%s\' is not a station" %station
 
@@ -186,7 +337,7 @@ def inbound_sms():
     #    response.message("Hi! Not quite sure what you meant, but okay.")
     # we return back the mimetype because Twilio needs an XML response
     return Response(str(response), mimetype="application/xml"), 200
-
+    print "Output test"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
